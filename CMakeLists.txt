@@ -15,17 +15,27 @@ else()
     set(PICO_SDK_PATH lib/pico-sdk)
 endif()
 
-if(DEFINED ENV{FREERTOS_PATH})
-    set(FREERTOS_PATH $ENV{FREERTOS_PATH})
+if(DEFINED ENV{FREERTOS_KERNEL_PATH})
+    set(FREERTOS_KERNEL_PATH $ENV{FREERTOS_KERNEL_PATH})
 else()
-    set(FREERTOS_PATH lib/freertos)
+    set(FREERTOS_KERNEL_PATH lib/freertos)
 endif()
+message("FreeRTOS path: ${FREERTOS_KERNEL_PATH}")
+
+if(DEFINED ENV{CAN_PATH})
+    set(CAN_PATH $ENV{CAN_PATH})
+else()
+    set(CAN_PATH lib/can2040)
+endif()
+message("CAN2040 path: ${CAN_PATH}")
 
 if(DEFINED ENV{UNITY_PATH})
     set(UNITY_PATH $ENV{UNITY_PATH})
 else()
     set(UNITY_PATH lib/unity)
 endif()
+message("Unity path: ${UNITY_PATH}")
+
 
 # ====================================================================================
 cmake_minimum_required(VERSION 3.13)
@@ -41,10 +51,11 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 include(${PICO_SDK_PATH}/pico_sdk_init.cmake)
 
 # This imports the library configuration for FreeRTOS
-include(${FREERTOS_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+include(${FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 
 # This sets up the unity library. They don't provide a library export, so it's defined locally.
 include(unity.cmake)
+include(${CAN_PATH}/can2040.cmake)
 
 # This defines your project name, you can name it anything you want.
 project(myproject C CXX ASM)
